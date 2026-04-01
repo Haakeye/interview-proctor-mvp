@@ -1,0 +1,61 @@
+# Manager's Guide: Interview Proctoring MVP
+
+This document breaks down the entire Proctoring MVP so you can easily explain the architecture, the code, and the cheating detection mechanisms to your manager.
+
+---
+
+## 1. High-Level Overview
+**What is this?** 
+It is a browser-based, AI-driven Interview Proctoring System. It runs entirely on the candidate's web browser, meaning it is fast, highly responsive, and doesn't require sending live video feeds to an expensive backend server for processing.
+
+**The Tech Stack:**
+*   **HTML5** (Structuring the web page)
+*   **CSS3** (The modern, dark-mode "Glassmorphism" UI)
+*   **Vanilla JavaScript** (`app.js` is the "brain" where all the logic lives)
+*   **WebGazer.js** (A machine-learning JavaScript library for eye tracking)
+*   **Web Speech API** (The browser's built-in voice-to-text engine)
+
+---
+
+## 2. Code Architecture: Which File Does What?
+*   `index.html`: The skeleton. It defines the "Zones" (Question Area, Options Area, Danger Zone) and the right-side Proctoring Dashboard. 
+*   `style.css`: The skin. It applies the dark mode colors, the glowing red tracking dot, and the animations for the malpractice alerts.
+*   `app.js`: **This is the main engine.** It contains three critical subsystems running simultaneously:
+    1.  The Eye Tracking Loop
+    2.  The Voice Recognition Event Listener
+    3.  The Environmental Light Scanner
+
+---
+
+## 3. How the AI Detects Cheating
+
+### A. Gaze & Eye Tracking (Where are they looking?)
+**How it works:** We use `webgazer.js`. When the candidate calibrated by clicking the screen, WebGazer learned to map their facial features and pupils to an `(X, Y)` pixel coordinate on the screen.
+**How it stops cheating:** 
+*   We divide the screen into invisible boxes. 
+*   If the exact `(X, Y)` coordinate drops into the **"Danger Zone"** (the bottom area of the screen near their lap), a hidden 3-second timer starts.
+*   If they look at their lap/desk for 3 solid seconds, it trips an infraction. 
+*   **Looking at side-monitors:** If their eyes look off the edge of the monitor, WebGazer returns `null` (data lost). If `null` is returned for 3 seconds, they are flagged for looking "Off-screen".
+*   **Distance:** If they back their head up too far, the camera loses facial landmark lock, also returning `null` and flagging them.
+
+### B. Voice Detection (Are they reading the question to a helper?)
+**How it works:** In `app.js`, we tap into the `webkitSpeechRecognition` engine. This actively listens to the microphone and transcribes what the candidate is whispering or saying.
+**How it stops cheating:** 
+*   We don't just listen for noise; we do a **Text Similarity Match**. 
+*   If the candidate says "Explain the difference between let and const...", the javascript compares those words to the exact text written in the HTML Question Area.
+*   If there is a **>60% keyword match** between their voice and the question, the system instantly flags them. *Candidate is Reading Out Loud!* This stops candidates from feeding questions to a helper out of the camera's view.
+
+### C. Environmental Blue-Light Detection (Are they using a hidden phone?)
+**How it works:** Some candidates place a phone just out of sight, barely glancing at it to defeat eye-trackers. 
+**How it stops cheating:** 
+*   In `app.js`, the `processVideoFrame()` function takes a hidden "screenshot" of the webcam feed twice a second and dumps it into a hidden `<canvas>` element.
+*   It calculates every single pixel's Red, Green, and Blue light values to establish a baseline of the room's lighting.
+*   If a phone screen turns on right under their face, the camera will catch the sudden spike in **Blue Light reflections**. The algorithm detects this spike against the baseline and throws a "Sudden blue-light increase / Possible phone screen" flag.
+
+---
+
+## 4. The 10-Strike Rule (Disqualification)
+Everything ties together into a central state machine `STATE.malpracticeFlags`. 
+*   Whether they looked away, read out loud, or flashed a phone screen, the counter ticks up. 
+*   The system actively updates the Dashboard (`1 / 10`). 
+*   If it hits `10`, `app.js` runs a lock-out function, covering the entire screen in a red `DISQUALIFIED` overlay, hiding the dismiss button so the candidate can no longer proceed with the test.

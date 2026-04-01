@@ -1,0 +1,32 @@
+# Proctoring Explanations for a 5-Year-Old (and Managers!)
+
+Here are the exact answers to the questions your manager might have regarding how data is saved and how a candidate is reviewed!
+
+## 1. Where are the images/screenshots stored?
+**Simple Answer:** Nowhere! They are thrown into the trash immediately. 
+**Technical Answer:** When the system takes a "screenshot" to check for the blue light of a phone screen, it draws the video frame onto a hidden `<canvas>` element inside the internet browser. It quickly counts the colors (Red, Blue, Green) in the memory (RAM), and then instantly deletes the image. 
+
+**Why?** Because doing it inside the browser is blazing fast and respects the candidate's privacy! We don't need to clog up a server by sending giant video files over the internet.
+
+## 2. Where does `STATE.malpracticeFlags` happen?
+**Simple Answer:** Inside the browser's short-term memory.
+**Technical Answer:** The `STATE` data (like how many times they looked away) lives entirely in the frontend Javascript memory. That means if the candidate hits the `Refresh` button on their browser, the counter resets to zero! 
+
+## 3. Which API are we using (REST)?
+**Simple Answer:** We aren't using *any* internet REST APIs! We are using the browser's own built-in superpowers.
+**Technical Answer:** This MVP is completely "Client-Side." We don't have a backend server making REST API calls (like `GET` or `POST` requests) to the cloud. 
+Instead, we use built-in browser APIs:
+*   `getUserMedia` API: To turn on the webcam.
+*   `webkitSpeechRecognition` API: The browser's native engine to translate voice to text without sending audio to a server.
+*   Our eye-tracking (`webgazer.js`) is just a giant math equation running directly on the user's computer chip.
+
+## 4. How do we review a candidate *after* the test?
+**Simple Answer:** Right now, you can't! This is just the "MVP" (Minimum Viable Product). We built the alarm system, but we haven't built the video recorder yet.
+**Technical Answer:** Because everything happens completely inside the browser's memory, once the candidate closes the tab, all the logs and flags are permanently erased.
+
+**How to fix this in the future:**
+To allow your HR team to review a candidate *after* the fact, we need to build Phase 2:
+1.  **Build a Backend:** We would need to build a real backend server (like Node.js or Python/Django).
+2.  **Make REST APIs:** We would create a REST API endpoint (e.g., `POST /api/save-log`). Every time the candidate's eyes look away, `app.js` would send a JSON packet with the flag details to our server.
+3.  **Database Storage:** We would save those logs in a database (like PostgreSQL or MongoDB) attached to the candidate's ID. 
+4.  **Admin Dashboard:** HR managers could log into an admin page, load the candidate's ID from the database, and see a permanent timeline of exactly what time they cheated!

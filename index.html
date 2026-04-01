@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Interview Proctoring</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
+</head>
+<body>
+    <div id="gaze-dot"></div>
+    <div class="app-container">
+        <!-- Main Content Area -->
+        <main class="content-area">
+            <div id="question-area" class="zone">
+                <div class="zone-label">Question Area</div>
+                <h1 id="question-text">Explain the difference between let, const, and var in JavaScript, and when to use each.</h1>
+            </div>
+            
+            <div id="options-area" class="zone">
+                <div class="zone-label">Options Area</div>
+                <div class="options">
+                    <button class="option-btn">A. 'let' and 'const' are block-scoped, 'var' is function-scoped.</button>
+                    <button class="option-btn">B. 'const' variables can be reassigned but not redeclared.</button>
+                    <button class="option-btn">C. 'let' and 'var' are hoisted, 'const' is not.</button>
+                    <button class="option-btn">D. There is no practical difference between them.</button>
+                </div>
+            </div>
+            
+            <div id="danger-area" class="zone">
+                <div class="zone-label">Danger Zone (Do not look here!)</div>
+                <p>Looking in this area for more than 3 seconds will trigger a malpractice flag.</p>
+            </div>
+        </main>
+
+        <!-- Sidebar / Proctoring Dashboard -->
+        <aside class="dashboard glass-panel">
+            <div class="dashboard-header">
+                <h2>Proctor Dashboard</h2>
+                <div id="status-indicator" class="status">Offline</div>
+            </div>
+            
+            <div class="video-container">
+                <!-- WebGazer will inject the video feed here -->
+                <canvas id="env-canvas" style="display:none;"></canvas>
+            </div>
+
+            <div class="dashboard-stats glass-panel-inner" style="margin-bottom: 16px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                <p style="font-size: 0.9rem; margin-bottom: 8px; color: var(--text-secondary);">Live Gaze Data: <br><strong id="live-gaze-data" style="color: var(--accent-blue); font-size: 1rem;">Waiting for calibration...</strong></p>
+                <p style="font-size: 0.9rem; color: var(--text-secondary);">Total Infractions: <strong id="flag-counter" style="color: var(--accent-red); font-size: 1.2rem;">0</strong> / 10</p>
+            </div>
+
+            <div class="logs-container">
+                <h3>Activity Logs</h3>
+                <ul id="activity-logs">
+                    <li><span class="timestamp">Now</span> System Initializing...</li>
+                </ul>
+            </div>
+            
+            <button id="start-btn" class="primary-btn">Start Proctoring</button>
+        </aside>
+    </div>
+
+    <!-- Alert Overlay -->
+    <div id="alert-overlay" class="hidden">
+        <div class="alert-content glass-panel error-panel">
+            <h2 id="alert-title">⚠️ MALPRACTICE DETECTED ⚠️</h2>
+            <p id="alert-reason">Candidate is looking down at a potential device!</p>
+            <button id="dismiss-btn" class="secondary-btn">Acknowledge</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
