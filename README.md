@@ -2,6 +2,11 @@
 
 ![GazeGuard Banner](https://img.shields.io/badge/Security-AI%20Proctoring-blue?style=for-the-badge) ![MediaPipe](https://img.shields.io/badge/AI-MediaPipe-orange?style=for-the-badge) ![Client Side](https://img.shields.io/badge/Architecture-100%25%20Client--Side-brightgreen?style=for-the-badge)
 
+<br/>
+<p align="center">
+  <img src="demo.gif" alt="GazeGuard Demo UI in Action" width="800">
+</p>
+<br/>
 **GazeGuard** is an advanced, privacy-first interview proctoring Minimum Viable Product (MVP). Built entirely on client-side technologies, it leverages Google's **MediaPipe Face Mesh** and geometric pupil-tracking regression to detect behavioral malpractice in real-time—at zero cloud computing cost.
 
 ## 🚀 Key Features
